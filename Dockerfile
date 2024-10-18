@@ -1,16 +1,31 @@
-FROM node:alpine
+# Build stage
+FROM node:18 AS build
 
-# Set the working directory
 WORKDIR /app
-# Copy the package.json and package-lock.json files
+
+# Copy package.json and package-lock.json to the container
 COPY package*.json ./
-# Install the dependencies
+
+# Install dependencies
 RUN npm install
-# Copy the app files
+
+# Copy the rest of the application code
 COPY . .
-# Build the app
+
+# Build the React app
 RUN npm run build
-# Expose the port
-EXPOSE 3000
-# Run the app
-CMD ["npm", "start"]
+
+# Serve stage
+FROM nginx:1.25.1
+
+# Copy the custom nginx.conf file to the container
+COPY .docker/nginx.conf /etc/nginx/nginx.conf
+
+# Copy the built React app from the build stage to the nginx container
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
