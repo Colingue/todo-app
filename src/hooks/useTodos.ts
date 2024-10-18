@@ -10,7 +10,7 @@ export const useTodos = () => {
   const fetchTodos = async () => {
     try {
       const data = await ky
-        .get("http://localhost:8080/api/todos")
+        .get(`${process.env.REACT_APP_API_URL}/todos`)
         .json<Todo[]>();
       setTodos(data);
     } catch (error) {
@@ -23,7 +23,7 @@ export const useTodos = () => {
 
   const toggleCompleted = async (todo: Todo) => {
     try {
-      await ky.put(`http://localhost:8080/api/todos/${todo.id}`, {
+      await ky.put(`${process.env.REACT_APP_API_URL}/todos/${todo.id}`, {
         json: {
           ...todo,
           completed: !todo.completed,

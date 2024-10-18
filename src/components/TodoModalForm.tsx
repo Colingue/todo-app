@@ -26,7 +26,7 @@ export default function TodoModalForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await ky.post("http://localhost:8080/api/todos", {
+      await ky.post(`${process.env.REACT_APP_API_URL}/todos`, {
         json: {
           ...formState,
           completed: false,
